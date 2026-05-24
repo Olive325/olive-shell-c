@@ -3,7 +3,7 @@
 #include <string.h>
 
 int main(int argc, char *argv[]) {
-  do{
+  while(1){
   // Flush after every printf
   setbuf(stdout, NULL);
 
@@ -16,8 +16,14 @@ int main(int argc, char *argv[]) {
 
   command[strcspn(command, "\n")] = '\0';
 
+  if (strcmp(command, "exit") == 0){
+    break;
+  }
+  
   printf("%s: command not found\n", command);
-  }while(1);
+
+
+  };
   
 
   return 0;
