@@ -80,6 +80,6 @@ void command_type(char *args){
 	}
   }
   if (!found){
-	printf("%s:not found\n", args);
+	printf("%s: not found\n", args);
   }
 }
