@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	    }
     }
     if (!found){
-      printf("%s:command not found\n", command);
+      printf("%s: command not found\n", command);
 	}
   };
   return 0; 
