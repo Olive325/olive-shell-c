@@ -92,7 +92,7 @@ void command_type(char *args){
   	snprintf(fpath, sizeof(fpath), "%s/%s", dir, args);
   	
 	  if (access(fpath, X_OK) == 0){
-	    printf("%s is %s\n", args, dir);
+	    printf("%s is %s\n", args, fpath);
 	    found = 1;
 	    return;
 	  }
