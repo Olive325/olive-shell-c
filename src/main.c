@@ -85,20 +85,20 @@ void command_type(char *args){
   }
   char *path = strdup(getenv("PATH"));
   
-  for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL, ":")){
+  for (char *dir = strtok(path,";"); dir != NULL; dir = strtok(NULL, ";")){
   	char *fpath;
-  	snprintf(fpath, sizeof(fpath), "%s/%s", dir, args);
+  	snprintf(fpath, sizeof(fpath), "%s\%s", dir, args);
   	
 	  if (access(fpath, X_OK) == 0){
 	    printf("%s is %s\n", args, dir);
-	   found = 1;
-	   return;
+	    found = 1;
+	    return;
 	  }
   }
   free(path);
   
   
   if (!found){
-	printf("%s: not found\n", args);
+	  printf("%s: not found\n", args);
   }
 }
