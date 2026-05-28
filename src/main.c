@@ -85,7 +85,7 @@ void command_type(char *args){
   }
   char *path = strdup(getenv("PATH"));
   
-  for (char *dir = strtok(path,";"); dir != NULL; dir = strtok(NULL, ";")){
+  for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL, ":")){
   	char *fpath;
   	snprintf(fpath, sizeof(fpath), "%s/%s", dir, args);
   	
