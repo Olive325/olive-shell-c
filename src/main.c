@@ -27,7 +27,6 @@ int main() {
   setbuf(stdout, NULL);
   
   while(1){
-
     printf("$ ");
 
     char input[1024];
@@ -43,9 +42,8 @@ int main() {
   	if (args == NULL){
       args = "";
 	  }
-	  if (command == NULL){
-	    command = "";
-	   found = 1;
+	  if (!command){
+      continue;
 	  }
 
     for (int i = 0; i < BUILTINS_LEN; i++){
@@ -56,6 +54,7 @@ int main() {
   		  found = 1;
   		  break;
 	    }
+
     }
     if (!found){
       printf("%s: command not found\n", command);
@@ -83,7 +82,14 @@ void command_type(char *args){
 	    return;
 	  }
   }
-  char *path = strdup(getenv("PATH"));
+  char *env_path = getenv("PATH");
+  if (env_path = NULL){
+    printf("PATH not set\n");
+    return;
+  }
+
+  char *path = env_path;
+
   
   for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL, ":")){
   	int dir_len = strlen(dir);
