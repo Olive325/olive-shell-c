@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 typedef void (*CommandFunc)(char *);
 
@@ -75,22 +76,33 @@ int main() {
       snprintf(fpath, sizeof(fpath), "%s/%s", dir, command);
 
       if (access(fpath, X_OK) == 0){
-        pid_t process = fork();
-        if (process < 0){
+        pid_t process_id = fork();
+        if (process_id < 0){
           perror("fork fail");
+          free(path);
           exit(1);
+          }
+        else if(process_id == 0){
+  
+          char *args1 = strtok(args, " ");
+          char *args2 = strtok(NULL, "");
+          if (args1 == NULL){
+            args1 = "";
+          }
+          if(args2 == NULL){
+            args2 = "";
+          }
+          execl(fpath, command, args1, args2, (char*)NULL);
+
+          found = 1;
+          free(path);
+          break;
         }
-        char *args1 = strtok(args, " ");
-        char *args2 = strtok(NULL, "");
-        if (args1 == NULL){
-          args1 = "";
-	      }
-        if(args2 == NULL){
-          args2 = "";
+        else{
+	  int status;
+	  waitpid(process_id, &status, 0);
+	  found = 1;
         }
-        execl(fpath, command, args1, args2, (char*)NULL);
-        found = 1;
-        break;
       }
     }
 
@@ -129,15 +141,15 @@ void command_type(char *args){
   char *path = strdup(env_path);
 
   
-  for (char *dir = strtok(path,";"); dir != NULL; dir = strtok(NULL, ";")){
+  for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL, ":")){
 
   	char fpath[1024];
-  	snprintf(fpath, sizeof(fpath), "%s\\%s", dir, args);
-  	
+  	snprintf(fpath, sizeof(fpath), "%s/%s", dir, args);
+
 	  if (access(fpath, X_OK) == 0){
 	    printf("%s is %s\n", args, fpath);
 	    found = 1;
-	    free(path);
+      free(path);
 	    return;
 	  }
   }
