@@ -17,12 +17,14 @@ void command_exit(char **args);
 void command_echo(char **args);
 void command_type(char **args);
 void command_pwd(char **args);
+void command_cd(char **args);
 
 const BuiltinCommands builtins[] = {
   {"exit", &command_exit},
   {"echo", &command_echo},
   {"type", &command_type},
   {"pwd", &command_pwd},
+  {"cd", &command_cd},
 };
 
 #define BUILTINS_LEN (sizeof(builtins) / sizeof(builtins[0]))
@@ -187,4 +189,10 @@ void command_pwd(char **args){
   	exit(1);
   }
   
+}
+
+void command_cd(char **args){
+  if (chdir(args[1]) != 0){
+  	printf("%s: No such file or directory\n", args[1]);
+  }
 }
