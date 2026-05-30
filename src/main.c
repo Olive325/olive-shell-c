@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <limits.h>
 
 typedef void (*CommandFunc)(char **);
 
@@ -15,11 +16,13 @@ typedef struct{
 void command_exit(char **args);
 void command_echo(char **args);
 void command_type(char **args);
+void command_pwd(char **args);
 
 const BuiltinCommands builtins[] = {
   {"exit", &command_exit},
   {"echo", &command_echo},
-  {"type", &command_type}
+  {"type", &command_type},
+  {"pwd", &command_pwd},
 };
 
 #define BUILTINS_LEN (sizeof(builtins) / sizeof(builtins[0]))
@@ -152,7 +155,7 @@ void command_type(char **args){
   char *path = strdup(env_path);
 
 
-  for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL, ":")){
+  for (char *dir = strtok(path, ":"); dir != NULL; dir = strtok(NULL, ":")){
 
   	char fpath[1024];
   	snprintf(fpath, sizeof(fpath), "%s/%s", dir, args[1]);
@@ -170,4 +173,18 @@ void command_type(char **args){
   if (!found){
 	  printf("%s: not found\n", args[1]);
   }
+}
+
+void command_pwd(char **args){
+	
+  char cwd[PATH_MAX];
+  
+  if(getcwd(cwd, sizeof(cwd)) != NULL){
+  	printf("%s\n", cwd);
+  }
+  else{
+  	perror("getcwd");
+  	exit(1);
+  }
+  
 }
