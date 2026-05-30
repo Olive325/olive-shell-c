@@ -165,7 +165,7 @@ void command_type(char **args){
 	  if (access(fpath, X_OK) == 0){
 	    printf("%s is %s\n", args[1], fpath);
 	    found = 1;
-      	free(path);
+            free(path);
 	    return;
 	  }
   }
@@ -192,7 +192,18 @@ void command_pwd(char **args){
 }
 
 void command_cd(char **args){
+	
+  if (strcmp(args[1], "~") == 0){
+  	char *env_path = getenv("HOME");
+    if (env_path == NULL){
+	  printf("HOME not set");
+	  return;
+	}
+	char *home_dir = strdup(env_path);
+    chdir(home_dir);
+    return;
+  }
   if (chdir(args[1]) != 0){
-  	printf("%s: No such file or directory\n", args[1]);
+    printf("%s: No such file or directory\n", args[1]);
   }
 }
