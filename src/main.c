@@ -105,8 +105,8 @@ int main(int argc, char *argv[]) {
 	  int status;
    	  waitpid(process_id, &status, 0);
    	  if (WIFEXITED(status) && WEXITSTATUS(status) == 127){
-      printf("%s: command not found\n", args[0]);
-  	}
+        printf("%s: command not found\n", args[0]);
+  	  }
 	}
     
   	free(args);
