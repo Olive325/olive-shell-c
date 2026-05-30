@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 typedef void (*CommandFunc)(char *);
 
@@ -54,8 +55,45 @@ int main() {
   		  found = 1;
   		  break;
 	    }
-
     }
+
+    if (found){
+      continue;
+    }
+
+    char *env_path = getenv("PATH");
+
+    if (env_path == NULL){
+      printf("PATH not set\n");
+    }
+
+    char *path = strdup(env_path);
+
+    for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL,":")){
+
+      char fpath[1024];
+      snprintf(fpath, sizeof(fpath), "%s/%s", dir, command);
+
+      if (access(fpath, X_OK) == 0){
+        pid_t process = fork();
+        if (process < 0){
+          perror("fork fail");
+          exit(1);
+        }
+        char *args1 = strtok(args, " ");
+        char *args2 = strtok(NULL, "");
+        if (args1 == NULL){
+          args1 = "";
+	      }
+        if(args2 == NULL){
+          args2 = "";
+        }
+        execl(fpath, command, args1, args2, (char*)NULL);
+        found = 1;
+        break;
+      }
+    }
+
     if (!found){
       printf("%s: command not found\n", command);
   	}
@@ -83,23 +121,23 @@ void command_type(char *args){
 	  }
   }
   char *env_path = getenv("PATH");
-  if (env_path = NULL){
+  if (env_path == NULL){
     printf("PATH not set\n");
     return;
   }
 
-  char *path = env_path;
+  char *path = strdup(env_path);
 
   
-  for (char *dir = strtok(path,":"); dir != NULL; dir = strtok(NULL, ":")){
-  	int dir_len = strlen(dir);
-  	
-  	char fpath[dir_len + 2 + strlen(args)];
-  	snprintf(fpath, sizeof(fpath), "%s/%s", dir, args);
+  for (char *dir = strtok(path,";"); dir != NULL; dir = strtok(NULL, ";")){
+
+  	char fpath[1024];
+  	snprintf(fpath, sizeof(fpath), "%s\\%s", dir, args);
   	
 	  if (access(fpath, X_OK) == 0){
 	    printf("%s is %s\n", args, fpath);
 	    found = 1;
+	    free(path);
 	    return;
 	  }
   }
